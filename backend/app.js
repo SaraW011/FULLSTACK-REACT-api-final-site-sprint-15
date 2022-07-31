@@ -46,8 +46,8 @@ app.options("*", cors()); //enable requests for all routes
 for example, register and login: */
 
 //new route via auth:
-app.use("/users", usersRouter);
-app.use("/cards", cardsRouter);
+app.use("/users", auth, usersRouter);
+app.use("/cards", auth, cardsRouter);
 
 // Localhost 3000 message:
 app.get("/", (req, res) => {
