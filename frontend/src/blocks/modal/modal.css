@@ -1,0 +1,45 @@
+/* container for pop-up window */
+.modal {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left:0;
+    justify-content: center;
+    align-items: center;
+    display: none;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    
+    /* animation: */
+    animation: fadein .5s;
+    -webkit-animation: fadein .5s;
+    -moz-animation: fadein .5s;
+    -o-animation: fadein .5s;
+    -ms-animation: fadein .5s;
+    }
+
+  @keyframes fadein {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-moz-keyframes fadein {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-webkit-keyframes fadein {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-o-keyframes fadein {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-ms-keyframes fadein {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }

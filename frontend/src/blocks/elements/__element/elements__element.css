@@ -1,0 +1,10 @@
+/* styling for each card element -outer wrap */
+.elements__element {  
+    position: relative;
+    width: 100%;
+    list-style-type: none;
+    min-width: 280px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    overflow: hidden;
+}

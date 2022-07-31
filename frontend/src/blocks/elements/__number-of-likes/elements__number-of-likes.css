@@ -1,0 +1,11 @@
+.elements__number-of-likes {
+    display: block;
+    font-family: Inter;
+    font-style: normal;
+    margin-top: 3px;
+    color: #000;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 16px;
+    text-align: center;
+}

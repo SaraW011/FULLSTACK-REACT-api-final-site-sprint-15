@@ -1,0 +1,20 @@
+.login__input {
+    width: 100%;
+    font-family: 'Inter';
+    font-weight: 400;
+    font-size: 14px;
+    color: #CCCCCC;
+    background-color: #000000;
+    border: none;
+    border-bottom: 2px solid #CCCCCC;
+    margin-bottom: 30px;
+    padding-bottom: 13px;
+  }
+
+  .login__input:last-of-type {
+    margin-bottom: 216px;
+  }
+
+  .login__input:focus {
+    outline: none;
+  }

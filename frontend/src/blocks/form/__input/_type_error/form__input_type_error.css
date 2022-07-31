@@ -1,0 +1,6 @@
+.form__input_type_error {
+    border-bottom-color: red;
+  
+    /* The bottom border will become red every time
+    the input data is invalid */
+  }

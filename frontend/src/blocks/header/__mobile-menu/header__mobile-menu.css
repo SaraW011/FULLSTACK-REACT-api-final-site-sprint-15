@@ -1,0 +1,10 @@
+.header__mobile-menu {
+  display: inline-block;
+  cursor: pointer;
+    }
+
+.header__mobile-menu_hide {
+  display: none;
+    }
+    
+    

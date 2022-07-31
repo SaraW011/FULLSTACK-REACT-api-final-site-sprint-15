@@ -1,0 +1,30 @@
+/* card elements are arranged as a list -ul */
+.elements__list {
+        display: inline-grid;
+        max-width: 880px;
+        grid-template-columns: repeat(3, 1fr);
+        margin: 50px auto 67px auto;
+        grid-gap: 20px 17px;
+        padding: 0;
+    }
+    
+    
+    @media screen and (max-width: 800px) {
+        .elements__list  {
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 25px 20px;
+        }
+      }
+    
+      @media screen and (max-width: 540px) {
+        .elements__list {
+            grid-template-columns: 1fr;
+            grid-gap: 20px auto;
+        }
+      }
+    
+      @media screen and (max-width: 320px) {
+        .elements__list  {
+            margin: 42px 0 44px 0;
+        }
+    }

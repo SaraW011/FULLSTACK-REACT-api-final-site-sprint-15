@@ -1,0 +1,12 @@
+.modal__close-button_type-preview {
+    position: absolute;
+    top: 60px;
+    right: -5px;
+} 
+
+@media screen and (max-width: 720px) {
+    .modal__close-button_type-preview  {
+        top: 75px;
+        right: 5px;
+    }
+  }

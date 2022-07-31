@@ -1,0 +1,15 @@
+.modal__image-container {
+    height: 75vh;
+    margin-top: 90px;
+    /* max-width: 433px; */
+    /* max-height: 540px; */
+    background: transparent;
+}
+
+  @media screen and (max-width: 720px) {
+    .modal__image-container {
+        max-width: 240px;
+        /* max-height: 299px;  */
+        height: auto;
+    }
+  }

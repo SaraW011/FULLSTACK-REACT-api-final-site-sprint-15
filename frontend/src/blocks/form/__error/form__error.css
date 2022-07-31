@@ -1,0 +1,4 @@
+.form__error {
+    visibility: visible;
+    display: block;
+}

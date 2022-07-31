@@ -1,0 +1,37 @@
+.form__input {
+  width: 100%;
+  display: flex;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  text-align: left;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.20);
+  margin: 54px 0 0 0;
+  padding: 0; 
+}
+
+.form__input:last-of-type {
+  margin: 30px 0 0 0;
+}
+
+.form__input:focus {
+  outline: none;
+}
+
+/* non-dynamic pseudo-classes for displaying for error in browser : 
+
+.form__input:invalid {
+  border-bottom: 1px solid red; 
+} 
+
+.form__input:valid {
+  border-bottom: 1px solid green; 
+}  */
+
+@media screen and (max-width: 1024px) {
+  .form__input {
+    margin-top: 76px;
+  }
+}
