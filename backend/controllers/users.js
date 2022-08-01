@@ -15,13 +15,14 @@ const createUser = async (req, res) => {
       email: req.body.email,
       password: hash, // adding the hash to the database
     });
-    res.status(201).send({ message: `User ${user} created successfuly` });
-  } catch (err) {
     if (err.name === "ValidationError") {
       throw new BadRequestError({
         messege: `${err.statusCode}, Wrong email or password`,
       });
+    } else {
+      res.status(201).send({ message: `User ${user} created successfuly` });
     }
+  } catch (err) {
     next(err);
   }
 };
@@ -29,7 +30,6 @@ const createUser = async (req, res) => {
 const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email.toLowerCase() });
-    // return User.findUserByCredentials(email, password)
     // authentication successful! user is in the user variable
     if (user) {
       // sign token with private key:
@@ -40,16 +40,16 @@ const login = async (req, res, next) => {
         NODE_ENV === "production" ? JWT_SECRET : "super-strong-secret",
         { expiresIn: "7d" }
       );
-      res.status(200).send({ token });
-    }
-  } catch (err) {
-    if (err) {
+    } else if (err) {
       throw new UnauthorizedError({
         messege: `${err.statusCode}, authorization failed`,
       });
+    } else {
+      res.status(200).send({ token });
     }
+  } catch (err) {
+    next(err);
   }
-  next(err);
 };
 
 const getCurrentUser = async (req, res, next) => {
@@ -60,15 +60,16 @@ const getCurrentUser = async (req, res, next) => {
       NODE_ENV === "production" ? JWT_SECRET : "super-strong-secret"
     );
     const user = User.findById(payload._id);
-    res.status(200).send(user);
-  } catch (err) {
-    if (err) {
+    if (!user) {
       throw new BadRequestError({
         messege: `${err.statusCode}, wrong user ID`,
       });
+    } else {
+      res.status(200).send(user);
     }
+  } catch (err) {
+    next(err);
   }
-  next(err);
 };
 
 // get all user from db:
