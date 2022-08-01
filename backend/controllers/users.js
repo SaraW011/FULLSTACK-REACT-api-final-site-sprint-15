@@ -89,19 +89,17 @@ const getUsers = async (req, res, next) => {
 // find user by ID (current user)
 const getUserById = async (req, res, next) => {
   try {
-    const currentUser = await User.findById(req.params._id) // (logged-in user's `_id` property)
-      .orFail(() => {
-        throw new NotFoundError("User not found");
-      });
-    if (currentUser) {
+    const currentUser = await User.findById(req.params._id); // (logged-in user's `_id` property)
+    if (!currentUser) {
+      throw new NotFoundError("User not found");
+    } else if (err.name === "CastError") {
+      throw new BadRequestError("Bad request");
+    } else {
       res.send(currentUser).status(200);
     }
   } catch (err) {
-    if (err.name === "CastError") {
-      throw new BadRequestError("Bad request");
-    }
+    next(err);
   }
-  next(err);
 };
 
 // update user profile:
@@ -113,17 +111,16 @@ const updateProfile = async (req, res, next) => {
       { name: req.body.name, about: req.body.about },
       { new: true, runValidators: true }
     );
-    if (user) {
-      res.status(201).send({ message: `Profile ${user} updated successfuly` });
-    }
-  } catch (err) {
     if (err.name === "ValidationError") {
       throw new BadRequestError({
         messege: `${err.statusCode}, Could not update profile`,
       });
+    } else {
+      res.status(201).send({ message: `Profile ${user} updated successfuly` });
     }
+  } catch (err) {
+    next(err);
   }
-  next(err);
 };
 
 // update user avatar:
@@ -131,21 +128,21 @@ const updateAvatar = async (req, res, next) => {
   try {
     const id = req.user._id;
     const { avatar } = req.body;
-    User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
       id,
       { avatar },
       { new: true, runValidators: true }
-    ).then((user) => {
-      res.status(200).send({ message: `Avatar ${user} updated successfuly` });
-    });
-  } catch (err) {
+    );
     if (err.name === "ValidationError") {
       throw new BadRequestError({
         messege: `${err.statusCode}, Could not update avatar`,
       });
+    } else {
+      res.status(200).send({ message: `Avatar ${user} updated successfuly` });
     }
+  } catch (err) {
+    next(err);
   }
-  next(err);
 };
 
 module.exports = {
