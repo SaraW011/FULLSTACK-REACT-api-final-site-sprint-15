@@ -8,6 +8,7 @@ const {
   getUserById,
   updateProfile,
   updateAvatar,
+  getCurrentUser,
 } = require("../controllers/users");
 
 // returns all users
@@ -33,9 +34,17 @@ router.get(
   getUserById
 );
 
+router.get(
+  "users/me",
+  celebrate({
+    headers: Joi.object().keys({}).unknown(true),
+  }),
+  getCurrentUser
+);
+
 // update profile
 router.patch(
-  "/me",
+  "users/me",
   celebrate({
     [Segments.HEADERS]: Joi.object().keys({}).unknown(true),
     [Segments.BODY]: Joi.object().keys({

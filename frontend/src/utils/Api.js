@@ -102,8 +102,8 @@ checkResponse = (res) => {
 const api = new Api({
   // baseUrl: "https://around.nomoreparties.co/v1/group-12",
   // token: "b211c19a-1dd2-41b6-b48a-d98d5e63db67",
-  baseUrl: "https://api.sarawsmn.students.nomoredomainssbs.ru"
-  // baseUrl: "http://localhost:3000/",
+  // baseUrl: "https://api.sarawsmn.students.nomoredomainssbs.ru"
+  baseUrl: "http://localhost:4000",
 });
 
 export default api;

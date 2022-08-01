@@ -24,7 +24,7 @@ const validateURL = require("./middleware/validateURL");
 // const path = require("path");
 
 const app = express();
-const { PORT = 3000 } = process.env;
+const { PORT = 4000 } = process.env;
 console.log(process.env.NODE_ENV);
 
 // connect to MongoDB server
@@ -46,8 +46,8 @@ app.options("*", cors()); //enable requests for all routes
 for example, register and login: */
 
 //new route via auth:
-app.use("/users", auth, usersRouter);
-app.use("/cards", auth, cardsRouter);
+app.use("/users", usersRouter);
+app.use("/cards", cardsRouter);
 
 // Localhost 3000 message:
 app.get("/", (req, res) => {
@@ -72,6 +72,17 @@ app.get("/crash-test", () => {
   }, 0);
 });
 
+app.post(
+  "/signin",
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      email: Joi.string().email().required(),
+      password: Joi.string().required(),
+    }),
+  }),
+  login
+);
+
 // Pass routs to the corresponding controllers:
 app.post(
   "/signup",
@@ -85,17 +96,6 @@ app.post(
     }),
   }),
   createUser
-);
-
-app.post(
-  "/signin",
-  celebrate({
-    [Segments.BODY]: Joi.object().keys({
-      email: Joi.string().email().required(),
-      password: Joi.string().required(),
-    }),
-  }),
-  login
 );
 
 /* The error logger needs to be enabled

@@ -13,7 +13,7 @@ const {
 
 // returns all cards
 router.get(
-  "/",
+  "/cards",
   celebrate({
     [Segments.HEADERS]: Joi.object().keys({}).unknown(true),
     //unknown(true)->allow fields that are not listed in the validation object
@@ -23,7 +23,7 @@ router.get(
 
 // creates a new card
 router.post(
-  "/",
+  "/cards",
   celebrate({
     [Segments.HEADERS]: Joi.object().keys({}).unknown(true),
     [Segments.BODY]: Joi.object().keys({
