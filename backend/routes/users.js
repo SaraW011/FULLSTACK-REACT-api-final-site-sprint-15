@@ -5,10 +5,10 @@ const validateURL = require("../middleware/validateURL");
 
 const {
   getUsers,
-  getUserById,
+  getCurrentUser,
   updateProfile,
   updateAvatar,
-  getCurrentUser,
+  getUserById,
 } = require("../controllers/users");
 
 // returns all users
@@ -22,20 +22,7 @@ router.get(
 
 // returns a user by _id
 router.get(
-  "/:_id",
-  celebrate({
-    [Segments.HEADERS]: Joi.object().keys({}).unknown(true),
-    [Segments.PARAMS]: Joi.object()
-      .keys({
-        _id: Joi.string().hex(),
-      })
-      .unknown(true),
-  }),
-  getUserById
-);
-
-router.get(
-  "users/me",
+  "/me",
   celebrate({
     headers: Joi.object().keys({}).unknown(true),
   }),
@@ -44,7 +31,7 @@ router.get(
 
 // update profile
 router.patch(
-  "users/me",
+  "/me",
   celebrate({
     [Segments.HEADERS]: Joi.object().keys({}).unknown(true),
     [Segments.BODY]: Joi.object().keys({
@@ -65,6 +52,19 @@ router.patch(
     }),
   }),
   updateAvatar
+);
+
+router.get(
+  "/:userId",
+  celebrate({
+    [Segments.HEADERS]: Joi.object().keys({}).unknown(true),
+    [Segments.PARAMS]: Joi.object()
+      .keys({
+        userId: Joi.string().hex(),
+      })
+      .unknown(true),
+  }),
+  getUserById
 );
 
 module.exports = router;

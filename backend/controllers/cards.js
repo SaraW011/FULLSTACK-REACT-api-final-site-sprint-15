@@ -5,36 +5,20 @@ const UnauthorizedError = require("../middleware/errors/no-authorization-err"); 
 const NotFoundError = require("../middleware/errors/not-found-err"); // 404
 
 // get existing cards from db:
-const getCards = async (req, res, next) => {
-  try {
-    const card = await Card.find({});
-    if (!card) {
-      throw new NotFoundError({
-        message: `${err.statusCode}, no cards available`,
-      });
-    } else {
-      res.status(200).send(JSON.parse(cardsData));
-    }
-  } catch (err) {
-    next(err);
-  }
+const getCards = (req, res, next) => {
+  Card.find({})
+    .orFail(() => {
+      throw new NotFoundError("try creating a new card");
+    })
+    .then((cards) => res.send(cards.reverse()))
+    .catch(next);
 };
 
-// Create a new card:
-const createCard = async (req, res, next) => {
-  try {
-    const { name, link, owner = req.user._id } = req.body;
-    const card = await Card.create({ name, link, owner });
-    if (!card) {
-      throw new BadRequestError({
-        message: `${err.statusCode}, Bad request`,
-      });
-    } else {
-      res.status(201).send(card);
-    }
-  } catch (err) {
-    next(err);
-  }
+const createCard = (req, res, next) => {
+  const { name, link } = req.body;
+  Card.create({ name, link, owner: req.user._id })
+    .then((newCard) => res.send(newCard))
+    .catch(next);
 };
 
 //owner delete card
@@ -45,68 +29,61 @@ const deleteCard = async (req, res, next) => {
   } else if (req.user._id !== card.owner.toString()) {
     throw new UnauthorizedError("You may only delete your own cards");
   } else {
-    Card.findByIdAndRemove(card._id.toString()) //Mongoose
+    await Card.findByIdAndRemove(card._id.toString()) //Mongoose
       .then(() => {
-        res.status(200);
         res.json({ message: "your card is now deleted" });
       })
       .catch((err) => {
         if (err.name === "CastError") {
-          throw new BadRequestError({
-            message: `${err.statusCode}, Bad request`,
-          });
+          throw new BadRequestError("Bad request");
         }
         next(err);
       });
   }
 };
 
+// const deleteCard = async (req, res, next) => {
+//   try {
+//     const card = await Card.findByIdAndDelete(req.params.cardId);
+//     if (!card) {
+//       throw new NotFoundErr("Cannot find card to delete"); // Status(404)
+//     }
+//     res.status(200).json(`Card ${card.name} deleted successfully`);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+
 // like card one time:
-const likeCard = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true }
-  )
-    .orFail(
-      new NotFoundError({
-        message: `${err.statusCode}, could not put like`,
-      })
-    )
-    .then((card) => {
-      res.status(200).send(card.likes);
-    })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        throw new BadRequestError({
-          message: `${err.statusCode}, could not find card data`,
-        });
-      }
-    })
-    .catch(next);
+
+const likeCard = async (req, res, next) => {
+  try {
+    const like = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $addToSet: { likes: req.user._id } }, // add _id to array if not there
+      { new: true }
+    );
+    if (!like) {
+      throw new NotFoundError("could not put like");
+    }
+    res.status(200).send(like);
+  } catch (err) {
+    next(err);
+  }
 };
 
 // Dislike card:
-const dislikeCard = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true }
-  )
-    .orFail(() => {
-      throw new NotFoundError({
-        message: `${err.statusCode}, Could Not delete card like`,
-      });
-    })
-    .then((card) => res.status(200).send(card.likes))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        throw new BadRequestError({
-          message: `${err.statusCode}, incorrect data`,
-        });
-      }
-    })
-    .catch(next);
+const dislikeCard = async (req, res, next) => {
+  try {
+    const dislike = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $pull: { likes: req.user._id.toString() } },
+      { new: true }
+    );
+    res.status(200).send(dislike);
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = {
@@ -116,5 +93,3 @@ module.exports = {
   likeCard,
   dislikeCard,
 };
-
-//end

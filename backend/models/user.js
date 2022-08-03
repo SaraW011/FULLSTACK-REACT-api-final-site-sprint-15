@@ -39,6 +39,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+//authenticate user after signup:
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email: req.body.username.toLowerCase() })
     .select("+password") //get password hash
