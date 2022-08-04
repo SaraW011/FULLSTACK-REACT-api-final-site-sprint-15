@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator(email) {
         return validator.isEmail(email);
+        if (!validator.isEmail(email)) {
+          throw new Error("Email is invalid");
+        }
       },
       message: "Please enter a valid email",
     },
@@ -39,8 +42,10 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-//authenticate user after signup:
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function findUserByCredentials(
+  email,
+  password
+) {
   return this.findOne({ email: req.body.username.toLowerCase() })
     .select("+password") //get password hash
     .then((user) => {

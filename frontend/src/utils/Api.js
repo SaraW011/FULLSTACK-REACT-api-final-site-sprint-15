@@ -66,7 +66,7 @@ class Api {
 
     // 7. Deleting a card
     async deleteCard(id) {
-        console.log (id, "==deleted card id")
+        console.log (id, "== deleted card id")
         const res = await fetch(`${this._url}/cards/${id}`, {
             method: 'DELETE',
             headers: this._headers,

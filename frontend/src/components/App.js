@@ -44,28 +44,6 @@ export default function App() {
 
     //**----------->> AUTH <<--------*/
 
-    // register
-    function handleRegistration(email, password) {
-        auth.signup(email, password)
-            .then((res) => {
-                if (res) {
-                    setIsRegistered(true);
-                } else {
-                    setIsRegistered(false);
-                }
-            })
-            .then(() => {
-                setLoggedIn(true);
-                navigate('/');
-                // window.location.reload(true);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {
-                setIsInfoTooltipOpen(true);
-            });
-    }
 
     // check jwt token validation
     React.useEffect(() => {
@@ -78,8 +56,8 @@ export default function App() {
                             email: res.email,
                             id: res._id,
                         };
-                        setUserData(data);
                         setLoggedIn(true);
+                        setUserData(data);
                      }
                 })
                 .catch((err) => console.error(err));
@@ -129,9 +107,30 @@ export default function App() {
     //   }
     // }
 
+        // register
+        function handleRegistration(email, password) {
+            auth.signup(email, password)
+                .then((res) => {
+                    if (res) {
+                        setIsRegistered(true);
+                    } else {
+                        setIsRegistered(false);
+                    }
+                })
+                .then(() => {
+                    setLoggedIn(true);
+                })
+                .catch((err) => {
+                    console.log(err, "regestration error");
+                })
+                .finally(() => {
+                    setIsInfoTooltipOpen(true);
+                    navigate('/');
+                });
+        }
+    
     //**----------->> API <<-------------------*/
     React.useEffect(() => {
-        loggedIn &&
             api
                 .getData()
                 .then((data) => {
@@ -142,7 +141,7 @@ export default function App() {
                 .catch((err) => {
                     console.log(err);
                 });
-    }, [loggedIn]);
+    }, []);
 
     React.useEffect(() => {
         if (loggedIn) {
@@ -157,7 +156,7 @@ export default function App() {
                 }
             })();
         }
-    }, []);
+    }, [loggedIn]);
 
     function handleUpdateUser(input) {
         api.editUserInfo(input.name, input.about)

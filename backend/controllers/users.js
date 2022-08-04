@@ -41,6 +41,7 @@ const createUser = async (req, res, next) => {
       res.status(201).send({
         message: `User ${user} created successfuly`,
       });
+      console.log(user);
     }
   } catch (err) {
     next(err);
