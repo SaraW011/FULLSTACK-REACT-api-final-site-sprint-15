@@ -84,7 +84,7 @@ export default function App() {
                 })
                 .catch((err) => console.error(err));
         }
-    }, [loggedIn]);
+    }, []);
 
     // login
     function handleLogin(email, password) {
@@ -97,10 +97,10 @@ export default function App() {
                     const userData = {
                         email: email,
                     };
-                    // navigate('/');
                     window.location.reload(true);
                     setUserData(userData);
                     setLoggedIn(true);
+                    navigate('/');
                 }
             })
             .catch((err) => {
@@ -186,28 +186,29 @@ export default function App() {
 
     function toggleLike(card) {
         setCards((state) =>
-            state.map((currentCard) =>
-                currentCard._id === card._id ? card : currentCard,
-            ),
+            state.map((likedCard) =>
+            (likedCard._id === card._id ? card : likedCard)
+            )
         );
     }
 
     function handleCardLike(card) {
         // Check one more time if this card was already liked
         const isLiked = card.likes.some(
-            (user) => user._id.toString() === currentUser._id,
+            id => id === currentUser._id
         );
         if (!isLiked) {
-            api.likeCard(card._id.toString())
+            api.likeCard(card._id)
                 .then((card) => {
                     toggleLike(card);
+                    console.log(currentUser._id, "current user id")
                 })
                 //catch err at the very end of any server request:
                 .catch((err) => {
                     console.log(err);
                 });
         } else {
-            api.dislikeCard(card._id.toString())
+            api.dislikeCard(card._id)
                 .then((card) => {
                     toggleLike(card);
                 })
@@ -233,14 +234,14 @@ export default function App() {
             });
     }
 
-    function handleAddPlaceSubmit(name, link, owner) {
-        api.addPlaceCard(name, link, owner)
+    function handleAddPlaceSubmit(name, link) {
+        api.addPlaceCard(name, link)
             .then((newCard) => {
                 setCards([newCard, ...cards]);
                 closeAllPopups();
             })
             .catch((err) => {
-                console.log(err, name, link, owner);
+              console.log(err);
             });
     }
 

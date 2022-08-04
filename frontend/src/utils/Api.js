@@ -23,7 +23,6 @@ class Api {
         const res = await fetch(`${this._url}/users/me`, {
             method: 'GET', //default
             headers: this._headers,
-            body: JSON.stringify()
         })
         return this.checkResponse(res);
     }
@@ -33,7 +32,6 @@ class Api {
         const res = await fetch(`${this._url}/cards`, {
             method: 'GET',
             headers: this._headers,
-            body: JSON.stringify()
         });
         return this.checkResponse(res);
     }
@@ -68,7 +66,7 @@ class Api {
 
     // 7. Deleting a card
     async deleteCard(id) {
-        console.log (id)
+        console.log (id, "==deleted card id")
         const res = await fetch(`${this._url}/cards/${id}`, {
             method: 'DELETE',
             headers: this._headers,

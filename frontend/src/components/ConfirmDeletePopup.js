@@ -9,6 +9,7 @@ export default function ConfirmDeletePopup(props) {
       buttonText="Yes"
       isOpen={props.isOpen}
       onSubmit={props.onSubmit}
+      onClose={props.onClose}
     />
   );
 }

@@ -17,45 +17,25 @@ const getCards = (req, res, next) => {
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((newCard) => res.send(newCard))
+    .then((newCard) => res.status(201).send(newCard))
     .catch(next);
 };
 
 //owner delete card
-const deleteCard = async (req, res, next) => {
-  const card = Card.findById(req.params.cardId); // need same value as in cardsRouter
-  if (!card) {
-    throw new NotFoundError("Could not find Card");
-  } else if (req.user._id !== card.owner.toString()) {
-    throw new UnauthorizedError("You may only delete your own cards");
-  } else {
-    await Card.findByIdAndRemove(card._id.toString()) //Mongoose
-      .then(() => {
-        res.json({ message: "your card is now deleted" });
-      })
-      .catch((err) => {
-        if (err.name === "CastError") {
-          throw new BadRequestError("Bad request");
-        }
-        next(err);
-      });
-  }
+const deleteCard = (req, res, next) => {
+  Card.findByIdAndRemove(req.params.cardId)
+    .orFail(() => {
+      throw new UnauthorizedError("You may only delete your own cards");
+    })
+    .then((card) => {
+      if (card.owner.equals(req.user._id)) {
+        res.send(card);
+      }
+    })
+    .catch(next);
 };
 
-// const deleteCard = async (req, res, next) => {
-//   try {
-//     const card = await Card.findByIdAndDelete(req.params.cardId);
-//     if (!card) {
-//       throw new NotFoundErr("Cannot find card to delete"); // Status(404)
-//     }
-//     res.status(200).json(`Card ${card.name} deleted successfully`);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-
 // like card one time:
-
 const likeCard = async (req, res, next) => {
   try {
     const like = await Card.findByIdAndUpdate(
@@ -77,10 +57,10 @@ const dislikeCard = async (req, res, next) => {
   try {
     const dislike = await Card.findByIdAndUpdate(
       req.params.cardId,
-      { $pull: { likes: req.user._id.toString() } },
+      { $pull: { likes: req.user._id } },
       { new: true }
     );
-    res.status(200).send(dislike);
+    res.send(dislike);
   } catch (err) {
     next(err);
   }

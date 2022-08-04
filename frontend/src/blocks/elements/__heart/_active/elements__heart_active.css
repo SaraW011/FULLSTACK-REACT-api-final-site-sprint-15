@@ -1,4 +1,15 @@
 .elements__heart_active {
-  opacity: 1;
   background-image: url(../../../../images/heart_active.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 20px;
+  height: 20px;
+  border: none;
+  margin: 0 auto;
+}
+
+.elements__heart_active:hover {
+  opacity: 0.5;
+  transition: ease-in-out 450ms;
+  cursor: pointer;
 }
