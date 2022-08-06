@@ -26,7 +26,7 @@ const validateURL = require("./middleware/validateURL");
 // const path = require("path");
 
 const app = express();
-const { PORT = 4000 } = process.env;
+const { PORT = 3000 } = process.env;
 
 // connect to MongoDB server
 mongoose.connect("mongodb://localhost:27017/aroundb");

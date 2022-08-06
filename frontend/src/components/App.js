@@ -55,7 +55,7 @@ export default function App() {
           console.log("you are now a special member")
         })
       .catch((err) => {
-        console.log(err, "regestration error");
+        console.log(err, "registration error");
       })
       .finally(() => {
         setIsInfoTooltipOpen(true);
