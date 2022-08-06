@@ -1,4 +1,4 @@
-# "Around the U.S." App, Authorization + Registration
+# "Around the U.S." App, Registration, Authorization & Authentication
 
 ### Handled by RESTful API and back-end server
 
