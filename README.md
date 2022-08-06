@@ -34,7 +34,7 @@ Project methods and technologies include:
 - [x]  Data Encryption: HTTPS Protocol via Certbot
 - [x]  PM2 Process Management
 
-![Preview App](frontend\src\images\Around-the-US.jpg)
+![Preview App](https://github.com/SaraW011/react-around-api-full/blob/main/frontend/src/images/Around-the-US.jpg)
 
 
 <span style="color:green">Author: Sara Weissman, 2022 Yandex-Practicum Masterschool</span>
