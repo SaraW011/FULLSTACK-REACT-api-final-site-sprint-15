@@ -1,11 +1,14 @@
+/* eslint-disable indent */
+/* eslint-disable quotes */
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const cors = require("cors");
 const { celebrate, Joi, Segments, errors } = require("celebrate");
+const bodyParser = require("body-parser");
 const { requestLogger, errorLogger } = require("./middleware/logger");
-
+// eslint-disable-next-line quotes
 const usersRouter = require("./routes/users");
 const cardsRouter = require("./routes/cards");
 
@@ -15,7 +18,6 @@ env variables from this file will appear in process.env
 gitignore .env */
 
 // get body in root request:
-const bodyParser = require("body-parser");
 
 const { createUser, login } = require("./controllers/users");
 const auth = require("./middleware/auth");
@@ -25,12 +27,11 @@ const validateURL = require("./middleware/validateURL");
 
 const app = express();
 const { PORT = 4000 } = process.env;
-console.log(process.env.NODE_ENV);
 
 // connect to MongoDB server
 mongoose.connect("mongodb://localhost:27017/aroundb");
 
-//point path to build from frontend <<<<only>>>> production:
+// point path to build from frontend <<<<only>>>> production:
 // app.use(express.static(path.join(__dirname, "public")));
 
 app.use(helmet());
@@ -39,16 +40,15 @@ app.use(requestLogger);
 
 // support parsing of application/json type post data:
 app.use(bodyParser.json());
-app.use(cors()); //!enables requests from all domains, not just your own, which can be a major security risk for your users...
-app.options("*", cors()); //enable requests for all routes
+app.use(cors()); //! enables requests from all domains, not just your own, which can be a major security risk for your users...
+app.options("*", cors()); // enable requests for all routes
 
 /* some routes don't require auth
 for example, register and login: */
 
-//new route via auth:
-app.use("/", usersRouter);
-app.use("/", cardsRouter);
-
+// new route via auth:
+app.use("/users", auth, usersRouter);
+app.use("/cards", auth, cardsRouter);
 // Localhost 3000 message:
 app.get("/", (req, res) => {
   res.send("You've been served!");
@@ -101,7 +101,7 @@ app.post(
 /* The error logger needs to be enabled
 after the route handlers and before the error handlers */
 
-//************************************/
+//* ***********************************/
 // CENTRALIZED ERROR HANDLERS:
 
 app.use(errorLogger);

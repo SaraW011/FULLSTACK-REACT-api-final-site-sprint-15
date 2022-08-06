@@ -53,8 +53,8 @@ class Auth {
 }
 
 const auth = new Auth({
-    // BASE_URL: "https://api.sarawsmn.students.nomoredomainssbs.ru"
-    BASE_URL: 'http://localhost:4000'
+    BASE_URL: "https://api.sarawsmn.students.nomoredomainssbs.ru"
+    // BASE_URL: 'http://localhost:4000'
 });
 
 export default auth;

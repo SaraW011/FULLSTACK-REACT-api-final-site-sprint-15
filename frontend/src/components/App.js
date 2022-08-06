@@ -46,14 +46,14 @@ export default function App() {
       .signup(email, password)
       .then((res) => {
         if (res) {
-          setIsRegistered(true);
+        setIsRegistered(true);
         } else {
-          setIsRegistered(false);
+        setIsRegistered(false);
         }
       })
       .then(() => {
-        setLoggedIn(true);
-      })
+          console.log("you are now a special member")
+        })
       .catch((err) => {
         console.log(err, "regestration error");
       })
@@ -93,11 +93,11 @@ export default function App() {
           //set email on reroute to main:
           const userData = {
             email: email,
+            password: password
           };
           window.location.reload(true);
-          setUserData(userData);
           setLoggedIn(true);
-          navigate("/");
+          setUserData(userData);
         }
       })
       .catch((err) => {

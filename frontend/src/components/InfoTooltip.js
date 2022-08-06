@@ -30,6 +30,9 @@ export default function InfoTooltip(props) {
             ></img>
             <h2 className={"modal__title_type_tooltip"}>
               Success! You have now been registered.
+              <br></br>
+              <br></br>
+              Please log in with your user credentials. 
             </h2>
           </>
          : 
