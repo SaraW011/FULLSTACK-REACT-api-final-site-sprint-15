@@ -28,9 +28,6 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator(email) {
         return validator.isEmail(email);
-        if (!validator.isEmail(email)) {
-          throw new Error("Email is invalid");
-        }
       },
       message: "Please enter a valid email",
     },
@@ -38,33 +35,37 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    select: false, //Stops API from returning the password hash
+    select: false, // Stops API from returning the password hash
   },
 });
 
 userSchema.statics.findUserByCredentials = function findUserByCredentials(
+  req,
   email,
   password
 ) {
-  return this.findOne({ email: req.body.username.toLowerCase() })
-    .select("+password") //get password hash
-    .then((user) => {
-      if (!user || user.password !== req.body.password) {
-        return Promise.reject(new Error("Incorrect email or password"));
-      }
-
-      return bcrypt.compare(password, user.password).then((matched) => {
-        // this "then" is added to bcrypt method (scope)
-        if (!matched) {
-          // the hashes didn't match, rejecting the promise
-
+  return (
+    this.findOne({ email })
+      // get password hash:
+      .select("+password")
+      .then((user) => {
+        if (!user || user.password !== req.body.password) {
           return Promise.reject(new Error("Incorrect email or password"));
         }
-        // authentication successful:
 
-        return user; // now user is available
-      });
-    });
+        return bcrypt.compare(password, user.password).then((matched) => {
+          // this "then" is added to bcrypt method (scope)
+          if (!matched) {
+            // the hashes didn't match, rejecting the promise
+
+            return Promise.reject(new Error("Incorrect email or password"));
+          }
+          // authentication successful:
+
+          return user; // now user is available
+        });
+      })
+  );
 };
 
 module.exports = mongoose.model("user", userSchema);

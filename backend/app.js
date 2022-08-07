@@ -1,6 +1,6 @@
-/* eslint-disable indent */
-/* eslint-disable quotes */
 require("dotenv").config();
+// protect against DoS attacks:
+const rateLimit = require("express-rate-limit");
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
@@ -8,17 +8,8 @@ const cors = require("cors");
 const { celebrate, Joi, Segments, errors } = require("celebrate");
 const bodyParser = require("body-parser");
 const { requestLogger, errorLogger } = require("./middleware/logger");
-// eslint-disable-next-line quotes
 const usersRouter = require("./routes/users");
 const cardsRouter = require("./routes/cards");
-
-/* STORING SECRET KEYS IN ENV VARIABLE:
-access variables when generating a token
-env variables from this file will appear in process.env
-gitignore .env */
-
-// get body in root request:
-
 const { createUser, login } = require("./controllers/users");
 const auth = require("./middleware/auth");
 const validateURL = require("./middleware/validateURL");
@@ -34,13 +25,24 @@ mongoose.connect("mongodb://localhost:27017/aroundb");
 // point path to build from frontend <<<<only>>>> production:
 // app.use(express.static(path.join(__dirname, "public")));
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter);
+
 app.use(helmet());
 
 app.use(requestLogger);
 
 // support parsing of application/json type post data:
 app.use(bodyParser.json());
-app.use(cors()); //! enables requests from all domains, not just your own, which can be a major security risk for your users...
+//! enables all domain req, not just your own, which can be a major security risk for your users...
+app.use(cors());
 app.options("*", cors()); // enable requests for all routes
 
 /* some routes don't require auth
@@ -50,8 +52,13 @@ for example, register and login: */
 app.use("/users", auth, usersRouter);
 app.use("/cards", auth, cardsRouter);
 // Localhost 3000 message:
-app.get("/", (req, res) => {
+
+// eslint-disable-next-line consistent-return
+app.get("/", (res, err) => {
   res.send("You've been served!");
+  if (err.name === "CastError") {
+    return res.status(404).json({ message: "Resource not found. Invalid ID" });
+  }
 });
 
 // Implementing a Temporary Authorization Solution by hardcoding (from postman):
@@ -106,11 +113,6 @@ after the route handlers and before the error handlers */
 
 app.use(errorLogger);
 app.use(errors()); // celebrate error handler
-
-// Non-existent address:
-// app.use((req, res) => {
-//   res.status(404).send({ message: "Requested resource not found" });
-// });
 
 // default err >> avoid undefined error:
 app.use((err, req, res, next) => {

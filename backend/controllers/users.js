@@ -1,10 +1,11 @@
-/* eslint-disable indent */
 const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const BadRequestError = require("../middleware/errors/bad-request-err"); // 400
 const UnauthorizedError = require("../middleware/errors/no-authorization-err"); // 401
 const NotFoundError = require("../middleware/errors/not-found-err"); // 404
+const ConflictError = require("../middleware/errors/conflict-err"); // 409
+
 const User = require("../models/user");
 
 // get all user from db:
@@ -25,47 +26,57 @@ const getUsers = async (req, res, next) => {
 // create new user:
 const createUser = async (req, res, next) => {
   const { email, password } = req.body;
-  try {
-    // hashing the password with salt (default 10)
-    const hash = await bcrypt.hash(password, 10);
-    //is email in database?
-    const user = await User.create({
+  // hashing the password with salt (default 10)
+  bcrypt.hash(password, 10)
+    // is email in database?
+    .then(() => User.create({
       email,
-      password: hash,
-    });
-    if (!user) {
-      throw new BadRequestError({
-        messege: `${err.statusCode}, Wrong email or password`,
-      });
-    } else {
+      password
+    }))
+    .then((user) => {
+      if (!user) {
+        throw new BadRequestError("Wrong email or password");
+      }
+      console.log(user);
       res.status(201).send({
         message: `User ${user} created successfuly`,
       });
-      console.log(user);
-    }
-  } catch (err) {
-    next(err);
-  }
+    })
+    .catch((err) => {
+      if (err.code === 11000) {
+        throw new ConflictError("User email is already registered");
+      }
+      next(err);
+    })
+    .catch(next);
 };
 
 const login = async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email.toLowerCase() });
+    const user = await User.findOne({
+      email: req.body.email.toLowerCase(),
+    });
     // authentication successful! user is in the user variable
     if (user) {
       // sign token with private key:
       const token = jwt.sign(
-        { _id: user._id },
-        //generate secret key in console and store in .env file:
-        //node -e "console.log(require('crypto').randomBytes(32).toString('hex'));"
+        {
+          _id: user._id,
+        },
+        // generate secret key in console and store in .env file:
+        // node -e "console.log(require('crypto').randomBytes(32).toString('hex'));"
         NODE_ENV === "production" ? JWT_SECRET : "super-strong-secret",
-        { expiresIn: "7d" }
+        {
+          expiresIn: "7d",
+        }
       );
-      res.status(200).send({ token });
+      res.status(200).send({
+        token,
+      });
     } else {
       console.log("is it failed");
       throw new UnauthorizedError({
-        messege: `Authorization failed`,
+        messege: "Authorization failed",
       });
     }
   } catch (err) {
@@ -79,7 +90,7 @@ const getCurrentUser = async (req, res, next) => {
     const user = await User.findById(req.user._id);
     if (!user) {
       throw new BadRequestError({
-        messege: `user ID incorrect`,
+        messege: "user ID incorrect",
       });
     } else {
       res.status(200).send(user);
@@ -126,6 +137,7 @@ const updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     {
+      // eslint-disable-next-line comma-dangle
       avatar: req.body.avatar,
     },
     {

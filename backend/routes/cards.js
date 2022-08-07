@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 const { celebrate, Joi, Segments } = require("celebrate");
 const validateURL = require("../middleware/validateURL");
@@ -17,7 +18,7 @@ router.get(
   "/",
   celebrate({
     [Segments.HEADERS]: Joi.object().keys({}).unknown(true),
-    //unknown(true)->allow fields that are not listed in the validation object
+    // unknown(true)->allow fields that are not listed in the validation object
   }),
   getCards
 );
