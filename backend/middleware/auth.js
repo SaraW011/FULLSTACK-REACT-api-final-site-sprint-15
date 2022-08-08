@@ -1,10 +1,10 @@
 /* verify token from headers
 If all OK middleware should add token payload to user object
-and call next()*/
+and call next() */
 const { NODE_ENV, JWT_SECRET } = process.env;
 const jwt = require("jsonwebtoken");
-const UnauthorizedError = require("../middleware/errors/no-authorization-err"); // 401
-const AccessDeniedError = require("../middleware/errors/no-access-err"); // 403
+const UnauthorizedError = require("./errors/no-authorization-err"); // 401
+const AccessDeniedError = require("./errors/no-access-err"); // 403
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
