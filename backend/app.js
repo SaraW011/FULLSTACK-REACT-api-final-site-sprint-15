@@ -22,9 +22,6 @@ const { PORT = 3000 } = process.env;
 // connect to MongoDB server
 mongoose.connect("mongodb://localhost:27017/aroundb");
 
-// point path to build from frontend <<<<only>>>> production:
-// app.use(express.static(path.join(__dirname, "public")));
-
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
@@ -41,7 +38,8 @@ app.use(requestLogger);
 
 // support parsing of application/json type post data:
 app.use(bodyParser.json());
-//! enables all domain req, not just your own, which can be a major security risk for your users...
+/* enables all domain req, not just your own,
+which can be a major security risk for your users... */
 app.use(cors());
 app.options("*", cors()); // enable requests for all routes
 

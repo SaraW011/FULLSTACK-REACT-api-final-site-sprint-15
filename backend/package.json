@@ -7,7 +7,7 @@
   "author": "Sara Weissman",
   "license": "ISC",
   "scripts": {
-    "lint": "npx eslint --quiet",
+    "lint": "npx eslint",
     "start": "node app.js",
     "dev": "nodemon app.js"
 
